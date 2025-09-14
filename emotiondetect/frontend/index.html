@@ -1,14 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Emotion Meet</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="script.js">
+    <meta charset="UTF-8">
+    <title>Emotion Detection</title>
 </head>
 <body>
-  <h2>Conference with Emotion Detection</h2>
-  <video id="localVideo" autoplay muted></video>
-  <div id="status"></div>
-  <script src="script.js"></script>
+    <h1>Real-Time Emotion Detection</h1>
+    <label>Enter your name: <input type="text" id="username" placeholder="User1"></label>
+    <button id="connectBtn">Connect</button>
+    <video id="video" autoplay width="640" height="480"></video>
+    <p id="prediction">Waiting for prediction...</p>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script>
+        const socket = io("http://localhost:5000"); // backend server address
+        const video = document.getElementById('video');
+        const predictionText = document.getElementById('prediction');
+        const connectBtn = document.getElementById('connectBtn');
+
+        let username = 'Anonymous';
+
+        connectBtn.onclick = () => {
+            username = document.getElementById('username').value || 'Anonymous';
+            socket.emit('register', {username: username});
+            connectBtn.disabled = true;
+        };
+
+        // Access webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => { video.srcObject = stream; });
+
+        // Send frames every 200ms
+        setInterval(() => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL('image/jpeg');
+            socket.emit('frame', dataURL);
+        }, 200);
+
+        // Receive prediction
+        socket.on('prediction', data => {
+            predictionText.innerText = `${data.label} (${data.confidence.toFixed(1)}%)`;
+        });
+    </script>
 </body>
 </html>

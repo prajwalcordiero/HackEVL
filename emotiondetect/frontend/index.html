@@ -1,27 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Emotion Detection + Chat</title>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script defer src="script.js"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Emotion Detection</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Emotion Detection with Chat</h1>
-    
-    <video id="video" autoplay playsinline></video>
-    <canvas id="canvas" hidden></canvas>
-
-    <div id="prediction-box">
-        <h2>Prediction:</h2>
-        <p id="prediction-text">Waiting...</p>
+  <div class="container">
+    <h1>Emotion Detection</h1>
+    <div class="video-container">
+      <div class="status-badge" id="localStatus">Active</div>
+      <video id="video" autoplay playsinline></video>
+      <div class="emotion-result" id="emotionResult">Detected: None</div>
     </div>
-
-    <div id="chat-box">
-        <h2>Chat</h2>
-        <div id="messages"></div>
-        <input type="text" id="chat-input" placeholder="Type a message..." />
-        <button id="send-btn">Send</button>
+    <div class="chat-container">
+      <div id="chatbox"></div>
+      <input type="text" id="messageInput" placeholder="Type a message..." />
+      <button id="sendBtn">Send</button>
     </div>
+  </div>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

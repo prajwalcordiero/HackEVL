@@ -1,3 +1,6 @@
 flask
 flask-socketio
-eventlet   # or gevent
+eventlet  
+opencv-python
+numpy
+tensorflow

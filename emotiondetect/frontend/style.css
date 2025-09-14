@@ -1,33 +1,93 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  color: #fff;
 }
 
-#video {
-    width: 400px;
-    border: 2px solid black;
-    margin: 10px;
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }
 
-#prediction-box {
-    margin: 20px;
-    font-size: 20px;
-    font-weight: bold;
+h1 {
+  margin-bottom: 20px;
+  color: #00ffea;
 }
 
-#chat-box {
-    margin: 20px auto;
-    width: 400px;
-    text-align: left;
-    border: 1px solid #ddd;
-    padding: 10px;
-    background: #f9f9f9;
+.video-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-#messages {
-    height: 200px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    padding: 5px;
+video {
+  width: 700px;
+  height: 500px;
+  border-radius: 12px;
+  border: 3px solid #00ffea;
+  background: black;
+  object-fit: cover;
+}
+
+.status-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: green;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.emotion-result {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.chat-container {
+  margin-top: 20px;
+  width: 700px;
+  background: #1f1f1f;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+#chatbox {
+  height: 200px;
+  overflow-y: auto;
+  border-bottom: 1px solid #333;
+  padding: 5px;
+}
+
+#messageInput {
+  margin-top: 10px;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+}
+
+#sendBtn {
+  margin-top: 10px;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background: #00ffea;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#sendBtn:hover {
+  background: #00cccc;
 }

@@ -1,0 +1,33 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+#video {
+    width: 400px;
+    border: 2px solid black;
+    margin: 10px;
+}
+
+#prediction-box {
+    margin: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#chat-box {
+    margin: 20px auto;
+    width: 400px;
+    text-align: left;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background: #f9f9f9;
+}
+
+#messages {
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 5px;
+}

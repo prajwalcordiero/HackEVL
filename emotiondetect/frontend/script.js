@@ -1,43 +1,53 @@
-const video = document.getElementById("localVideo");
-const statusDiv = document.getElementById("status");
+// Change IP if connecting from another device on LAN
+const socket = io("http://127.0.0.1:5000");
 
-// Start video
-navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-  .then((stream) => {
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const predictionText = document.getElementById("prediction-text");
+
+// Chat elements
+const chatInput = document.getElementById("chat-input");
+const sendBtn = document.getElementById("send-btn");
+const messagesDiv = document.getElementById("messages");
+
+// Ask user for a name
+let username = prompt("Enter your name:");
+if (!username) username = "Anonymous_" + Math.floor(Math.random() * 1000);
+socket.emit("register", { username });
+
+// Handle predictions
+socket.on("prediction", (data) => {
+    predictionText.innerText = `${data.label} (${data.confidence.toFixed(1)}%)`;
+});
+
+// Handle chat
+socket.on("chat", (data) => {
+    const msg = document.createElement("p");
+    msg.textContent = `${data.username}: ${data.message}`;
+    messagesDiv.appendChild(msg);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight; // auto scroll
+});
+
+// Send chat message
+sendBtn.addEventListener("click", () => {
+    const message = chatInput.value.trim();
+    if (message !== "") {
+        socket.emit("chat", { message });
+        chatInput.value = "";
+    }
+});
+
+// Video streaming
+navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
     video.srcObject = stream;
 
-    // Capture a frame every 2s
     setInterval(() => {
-      sendFrameToServer(video);
-    }, 2000);
-  });
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-async function sendFrameToServer(video) {
-  // Draw video frame to canvas
-  const canvas = document.createElement("canvas");
-  canvas.width = 48;
-  canvas.height = 48;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(video, 0, 0, 48, 48);
-
-  // Convert to grayscale
-  let imgData = ctx.getImageData(0, 0, 48, 48);
-  for (let i = 0; i < imgData.data.length; i += 4) {
-    let avg = (imgData.data[i] + imgData.data[i+1] + imgData.data[i+2]) / 3;
-    imgData.data[i] = imgData.data[i+1] = imgData.data[i+2] = avg;
-  }
-  ctx.putImageData(imgData, 0, 0);
-
-  // Encode to base64
-  const imageBase64 = canvas.toDataURL("image/jpeg").split(",")[1];
-
-  // Send to Flask
-  const res = await fetch("http://localhost:5001/infer", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ image: imageBase64 })
-  });
-
-  const result = await res.json();
-  statusDiv.innerText = `Detected: ${result.label} (${result.confidence}%)`;
-}
+        const dataUrl = canvas.toDataURL("image/jpeg");
+        socket.emit("frame", dataUrl);
+    }, 1000); // send 1 frame per second
+});

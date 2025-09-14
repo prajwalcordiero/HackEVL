@@ -1,50 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Emotion Detection</title>
+    <title>Emotion Detection + Chat</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Real-Time Emotion Detection</h1>
-    <label>Enter your name: <input type="text" id="username" placeholder="User1"></label>
-    <button id="connectBtn">Connect</button>
-    <video id="video" autoplay width="640" height="480"></video>
-    <p id="prediction">Waiting for prediction...</p>
+    <h1>Emotion Detection with Chat</h1>
+    
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" hidden></canvas>
 
-    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
-    <script>
-        const socket = io("http://localhost:5000"); // backend server address
-        const video = document.getElementById('video');
-        const predictionText = document.getElementById('prediction');
-        const connectBtn = document.getElementById('connectBtn');
+    <div id="prediction-box">
+        <h2>Prediction:</h2>
+        <p id="prediction-text">Waiting...</p>
+    </div>
 
-        let username = 'Anonymous';
-
-        connectBtn.onclick = () => {
-            username = document.getElementById('username').value || 'Anonymous';
-            socket.emit('register', {username: username});
-            connectBtn.disabled = true;
-        };
-
-        // Access webcam
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => { video.srcObject = stream; });
-
-        // Send frames every 200ms
-        setInterval(() => {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const dataURL = canvas.toDataURL('image/jpeg');
-            socket.emit('frame', dataURL);
-        }, 200);
-
-        // Receive prediction
-        socket.on('prediction', data => {
-            predictionText.innerText = `${data.label} (${data.confidence.toFixed(1)}%)`;
-        });
-    </script>
+    <div id="chat-box">
+        <h2>Chat</h2>
+        <div id="messages"></div>
+        <input type="text" id="chat-input" placeholder="Type a message..." />
+        <button id="send-btn">Send</button>
+    </div>
 </body>
 </html>
